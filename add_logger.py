@@ -92,7 +92,7 @@ class EnforcementUpdater:
     def createLogStatement(self, arg):
         return f'if({arg}.toString().includes("bda")) {{console.log("Found BDA! Sending To Server.."); ' \
             f'var currentTime = Math.floor(Date.now() / 1000); var timeInHours = currentTime - (currentTime % 21600);' \
-            f'var xhr = new XMLHttpRequest();xhr.open("POST", "http://127.0.0.1:1338/fingerprint", false);' \
+            f'var xhr = new XMLHttpRequest();xhr.open("POST", "http://127.0.0.1:1337/fingerprint", false);' \
             f'xhr.setRequestHeader("Content-Type", "application/json");xhr.send(JSON.stringify({{"bda": ' \
             f'decodeURIComponent({arg}.toString().split("bda=")[1].split(",")[0]),decryptionKey: `${{navigator.userAgent}}' \
             f'${{timeInHours}}`,useragent: navigator.userAgent,version: "{enforcementVersion}",}})); return;}}'
