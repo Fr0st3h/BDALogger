@@ -1,0 +1,6 @@
+beautifulsoup4==4.12.3
+fastapi==0.115.5
+loguru==0.7.0
+pycryptodome==3.17
+pydantic==2.10.1
+starlette==0.41.3

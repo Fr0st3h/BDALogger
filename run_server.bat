@@ -1,0 +1,1 @@
+uvicorn server:app --port 1338 --log-level critical
