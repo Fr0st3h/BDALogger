@@ -22,6 +22,9 @@ class EnforcementUpdater:
 
         regexPattern = r'\d+\.\d+\.\d+/enforcement\.[a-fA-F0-9]+\.html'
         updatedContent = re.sub(regexPattern, 'enforcement.html', fileContent)
+        
+        regexPattern = r'(return function\s*\(\s*([^)]*)\s*\)\s*\{\s*return\s+t\.apply\(this,\s*arguments\)\s*\})'
+        updatedContent = re.sub(regexPattern, self.addConsoleLogs, updatedContent)
 
         self.writeFile(f'{self.outputDir}/{self.lol}/v2/11111111-1111-1111-1111-111111111111/api.js', updatedContent)
         logger.success("api.js updated.")
@@ -69,11 +72,8 @@ class EnforcementUpdater:
         with open(f'{self.inputDir}/enforcement.js', 'r', encoding='utf-8') as file:
             fileContent = file.read()
 
-        regexPattern = r'(return function\s*\(\s*([^)]*)\s*\)\s*\{\s*return\s+t\.apply\(this,\s*arguments\)\s*\})'
-        updatedContent = re.sub(regexPattern, self.addConsoleLogs, fileContent)
-
         outputFilePath = f'{self.outputDir}/{self.lol}/v2/enforcement.js'
-        self.writeFile(outputFilePath, updatedContent)
+        self.writeFile(outputFilePath, fileContent)
         logger.success("enforcement.js updated.")
 
     def addConsoleLogs(self, match):
