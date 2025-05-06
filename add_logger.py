@@ -8,6 +8,7 @@ class EnforcementUpdater:
     def __init__(self, inputDir, outputDir):
         self.inputDir = inputDir
         self.outputDir = outputDir
+        self.enforcementVersion = ""
         self.lol = self.getLolValue()
 
     def getLolValue(self):
@@ -38,6 +39,7 @@ class EnforcementUpdater:
 
         if matches:
             enforcementVersion = matches[0].split("/")[0]
+            self.enforcementVersion = enforcementVersion
             enforcementHash = matches[0].split("/")[1].split(".")[1]
             logger.info(f'Found Enforcement Version {enforcementVersion} ({matches[0]})')
             return enforcementVersion, enforcementHash
@@ -95,7 +97,7 @@ class EnforcementUpdater:
             f'var xhr = new XMLHttpRequest();xhr.open("POST", "http://127.0.0.1:1337/fingerprint", false);' \
             f'xhr.setRequestHeader("Content-Type", "application/json");xhr.send(JSON.stringify({{"bda": ' \
             f'decodeURIComponent({arg}.toString().split("bda=")[1].split(",")[0]),decryptionKey: `${{navigator.userAgent}}' \
-            f'${{timeInHours}}`,useragent: navigator.userAgent,version: "{enforcementVersion}",}})); return;}}'
+            f'${{timeInHours}}`,useragent: navigator.userAgent,version: "{self.enforcementVersion}",}})); return;}}'
 
     def generateMainHtml(self):
         
