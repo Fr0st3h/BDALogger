@@ -18,9 +18,10 @@ app = FastAPI()
 
 @app.post("/fingerprint")
 async def logFP(payload: FPPayload):
-    logger.info(f'Received Fingerprint Payload, decrypting...')
+    logger.info(f'Received Fingerprint Payload, Saving Fingerprint...')
     try:
-        fingerprint = json.loads(decrypt(base64.b64decode(payload.bda), payload.decryptionKey).decode())
+        #fingerprint = json.loads(decrypt(base64.b64decode(payload.bda), payload.decryptionKey).decode())
+        fingerprint = json.loads(payload.bda)
         fingerprintBeautified = json.dumps(fingerprint, indent=2)
 
         fingerprintHash = fingerprint[1]['value']
@@ -31,7 +32,7 @@ async def logFP(payload: FPPayload):
 
         with open(savePath, 'w') as file:
             file.write(fingerprintBeautified)
-        logger.success(f'Decrypted and Saved Fingerprint To: {f"fingerprints/{payload.version}/{fingerprintHash}.json"}')
+        logger.success(f'Saved Fingerprint To: {f"fingerprints/{payload.version}/{fingerprintHash}.json"}')
         return 'forbidden', 403
     except Exception as e:
         traceback.print_exc()
