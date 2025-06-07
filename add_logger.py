@@ -23,8 +23,17 @@ class EnforcementUpdater:
         regexPattern = r'\d+\.\d+\.\d+/enforcement\.[a-fA-F0-9]+\.html'
         updatedContent = re.sub(regexPattern, 'enforcement.html', fileContent)
         
-        regexPattern = r'(return function\s*\(\s*([^)]*)\s*\)\s*\{\s*return\s+t\.apply\(this,\s*arguments\)\s*\})'
-        updatedContent = re.sub(regexPattern, self.addConsoleLogs, updatedContent)
+        #regexPattern = r'(return function\s*\(\s*([^)]*)\s*\)\s*\{\s*return\s+t\.apply\(this,\s*arguments\)\s*\})'
+        #updatedContent = re.sub(regexPattern, self.addConsoleLogs, updatedContent)
+
+        injection = f'''var xhr = new XMLHttpRequest();
+                xhr.open("POST", "http://127.0.0.1:1337/fingerprint", false);
+                xhr.setRequestHeader("Content-Type", "application/json");
+                xhr.send(JSON.stringify({{"bda": JSON.stringify(r),decryptionKey: 'None',useragent: navigator.userAgent,version: "{enforcementVersion}",}}));
+            '''
+
+        regexPattern = r'(case\s+14:\s*)(?=if\s*\(\s*o\s*=\s*t\.sent,)'
+        updatedContent = re.sub(regexPattern, r'\1' + injection, fileContent)
 
         self.writeFile(f'{self.outputDir}/{self.lol}/v2/11111111-1111-1111-1111-111111111111/api.js', updatedContent)
         logger.success("api.js updated.")
@@ -92,10 +101,12 @@ class EnforcementUpdater:
     def createLogStatement(self, arg):
         return f'if({arg}.toString().includes("bda")) {{console.log("Found BDA! Sending To Server.."); ' \
             f'var currentTime = Math.floor(Date.now() / 1000); var timeInHours = currentTime - (currentTime % 21600);' \
-            f'var xhr = new XMLHttpRequest();xhr.open("POST", "http://127.0.0.1:1337/fingerprint", false);' \
+            f'var xhr = new XMLHttpRequest();xhr.open("POST", "http://127.0.0.1:1339/fingerprint", false);' \
             f'xhr.setRequestHeader("Content-Type", "application/json");xhr.send(JSON.stringify({{"bda": ' \
             f'decodeURIComponent({arg}.toString().split("bda=")[1].split(",")[0]),decryptionKey: `${{navigator.userAgent}}' \
             f'${{timeInHours}}`,useragent: navigator.userAgent,version: "{enforcementVersion}",}})); return;}}'
+    
+    
 
     def generateMainHtml(self):
         
